@@ -3,6 +3,9 @@ from ImageTransformation import get_image_from_sequence
 from LorenzEulerEncryption import discretization_lorenz_based_on_euler
 from LorenzEulerEncryption import array_quantification
 import sys
+import os
+from PIL import Image
+import numpy as np
 
 
 def xor_arrays(array1, array2):
@@ -14,23 +17,6 @@ def xor_arrays(array1, array2):
         result.append(array1[i] ^ array2[i])
 
     return result
-
-
-def xor_n(gray_array, cheie_fluida_octeti, n):
-    enc_matrix1 = xor_arrays(gray_array, cheie_fluida_octeti)
-
-    for i in range(n):
-        x = xor_arrays(enc_matrix1, cheie_fluida_octeti)
-        enc_matrix1 = x
-
-    return enc_matrix1
-
-
-def write_array_to_file(array, filename):
-    with open(filename, 'w') as file:
-        for element in array:
-            file.write(str(element) + '\n')
-    print("Array successfully written to", filename)
 
 
 def build_fluid_key(x_quantificated_sequence, length):
@@ -53,11 +39,9 @@ def encrypt(image_path):
 
     encrypted_image = get_image_from_sequence(encryption_seq, image_shape)
     encrypted_image.show()
-    encrypted_image.convert('L').save(r"C:\Users\pegeorge\Downloads\la\image.png")
-
-    # decrypted_seq = xor_arrays(encryption_seq, fluid_key)
-    # decrypted_image = get_image_from_sequence(decrypted_seq, image_shape)
-    # decrypted_image.show()
+    enc_filename = os.path.dirname(image_path) + "/" + os.path.basename(image_path).split(".")[0] + "_encrypted" + ".png"
+    encrypted_image.convert('L').save(enc_filename)
+    print(enc_filename)
 
 
 def build_array_from_file(filename):
@@ -85,7 +69,9 @@ def decrypt(image_path):
     decryption_seq = xor_arrays(image_to_one_dimension_array, fluid_key)
     decrypted_image = get_image_from_sequence(decryption_seq, image_shape)
     decrypted_image.show()
-    decrypted_image.convert('L').save(r"C:\Users\pegeorge\Downloads\la\decrypted.jpeg")
+    decrypted_path = os.path.dirname(image_path) + "/" + os.path.basename(image_path).split(".")[0] + "_decrypted.jpeg"
+    decrypted_image.convert('L').save(decrypted_path)
+    print(decrypted_path)
 
 
 if __name__ == '__main__':
