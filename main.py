@@ -2,6 +2,7 @@ from ImageTransformation import image_to_one_dimension
 from ImageTransformation import get_image_from_sequence
 from LorenzEulerEncryption import discretization_lorenz_based_on_euler
 from LorenzEulerEncryption import array_quantification
+import sys
 
 
 def xor_arrays(array1, array2):
@@ -81,15 +82,20 @@ def decrypt(image_path):
     x_quantificated_sequence = array_quantification(x)
     fluid_key = build_fluid_key(x_quantificated_sequence, len(image_to_one_dimension_array))
 
-    dencryption_seq = xor_arrays(image_to_one_dimension_array, fluid_key)
-    decrypted_image = get_image_from_sequence(dencryption_seq, image_shape)
+    decryption_seq = xor_arrays(image_to_one_dimension_array, fluid_key)
+    decrypted_image = get_image_from_sequence(decryption_seq, image_shape)
     decrypted_image.show()
     decrypted_image.convert('L').save(r"C:\Users\pegeorge\Downloads\la\decrypted.jpeg")
 
 
-
 if __name__ == '__main__':
-    image_path = r"C:\Users\pegeorge\Downloads/lfff.jpeg"
-    encrypt(image_path)
-    image_path2 = r"C:\Users\pegeorge\Downloads\la\image.png"
-    decrypt(image_path2)
+    if sys.argv.__len__() > 1:
+        path = sys.argv[1]
+        operation = sys.argv[2]
+    else:
+        raise Exception("Not enough arguments provided. ")
+
+    if operation == 'ENCRYPT':
+        encrypt(path)
+    else:
+        decrypt(path)
