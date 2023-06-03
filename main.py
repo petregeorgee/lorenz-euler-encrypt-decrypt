@@ -4,9 +4,9 @@ from LorenzEulerEncryption import discretization_lorenz_based_on_euler
 from LorenzEulerEncryption import array_quantification
 import sys
 import os
-from PIL import Image
-import numpy as np
 
+from ImageHistogram import get_image_histogram
+from ImageHistogram import save_histogram
 
 def xor_arrays(array1, array2):
     if len(array1) != len(array2):
@@ -74,6 +74,21 @@ def decrypt(image_path):
     print(decrypted_path)
 
 
+def get_image_name(path):
+    # Get the base name of the file from the path
+    file_name = os.path.basename(path)
+
+    # Remove the extension from the file name
+    image_name = os.path.splitext(file_name)[0]
+
+    return image_name
+
+
+def get_histogram_statistic_image(image_path):
+    histogram = get_image_histogram(image_path)
+    save_histogram(histogram, get_image_name(image_path))
+
+
 if __name__ == '__main__':
     if sys.argv.__len__() > 1:
         path = sys.argv[1]
@@ -83,5 +98,7 @@ if __name__ == '__main__':
 
     if operation == 'ENCRYPT':
         encrypt(path)
-    else:
+    elif operation == 'DECRYPT':
         decrypt(path)
+    elif operation == 'HISTOGRAM':
+        get_histogram_statistic_image(path)
