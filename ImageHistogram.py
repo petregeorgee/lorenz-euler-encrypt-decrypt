@@ -3,6 +3,8 @@ import numpy as np
 from PIL import Image
 
 from Constants import Constants
+from Utils import get_image_name
+
 
 def get_image_histogram(image_path):
     # Open the image file
@@ -31,3 +33,8 @@ def save_histogram(histogram, image_name):
     output_path = Constants.OUTPUT_DIR + image_name + '_histogram.png'
     print (output_path)
     plt.savefig(output_path)
+
+
+def get_histogram_statistic_image(image_path):
+    histogram = get_image_histogram(image_path)
+    save_histogram(histogram, get_image_name(image_path))
