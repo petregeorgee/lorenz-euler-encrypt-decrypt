@@ -1,10 +1,4 @@
-import os
-import random
-
 import numpy as np
-
-from ImageTransformation import image_to_one_dimension
-from ImageTransformation import get_image_from_sequence
 
 
 def generate_permutation(n, d):
@@ -25,29 +19,24 @@ def generate_permutation(n, d):
     return q[1:]
 
 
-def get_permutation(image_path):
-    image_to_one_dimension_array, image_shape = image_to_one_dimension(image_path)
-
+def permute_pixel_array(pixels_array, image_shape):
     n = image_shape[0] * image_shape[1]
     d = generate_logistic_map(4, 0.12121212121, n)
-    # print_array_to_file(d, "C:\Repo\images\\d.txt")
 
     permutation = generate_permutation(n, d)
-    # print_array_to_file(permutation, "C:\Repo\images\\permutation.txt")
 
-    # print_array_to_file(permutation, "C:\Repo\images\\y.txt")
+    permuted_array = permute_pixels(pixels_array, permutation)
 
-    permuted_array = permute_pixels(image_to_one_dimension_array, permutation)
-    permuted_image = get_image_from_sequence(permuted_array, image_shape)
-    permuted_image.show()
+    return permuted_array
 
+
+def unpermute_array(permuted_array, image_shape):
+    n = image_shape[0] * image_shape[1]
+    d = generate_logistic_map(4, 0.12121212121, n)
+    permutation = generate_permutation(n, d)
     unpermuted_array = restore_pixels(permuted_array, permutation)
-    unpermuted_image = get_image_from_sequence(unpermuted_array, image_shape)
-    unpermuted_image.show()
-    # permuted_filename = os.path.dirname(image_path) + "/" + os.path.basename(image_path).split(".")[
-    #     0] + "_permuted" + ".png"
-    # permuted_image.convert('L').save(permuted_filename)
-    # print(permuted_image)
+
+    return unpermuted_array
 
 
 def generate_logistic_map(r, x0, n):
@@ -106,6 +95,7 @@ def permute_pixels(pixel_array, order):
 
     return permuted_array
 
+
 def restore_pixels(permuted_array, order):
     assert len(permuted_array) == len(order), "Permuted array and order must have the same length"
 
@@ -119,4 +109,3 @@ def restore_pixels(permuted_array, order):
     restored_array = restored_array[inverse_indices]
 
     return restored_array
-

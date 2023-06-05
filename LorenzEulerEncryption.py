@@ -1,7 +1,4 @@
 import decimal
-import os
-from ImageTransformation import image_to_one_dimension
-from ImageTransformation import get_image_from_sequence
 from Utils import xor_arrays
 
 
@@ -46,25 +43,19 @@ def discretization_lorenz_based_on_euler(x0, y0, z0, n_steps, h):
     return x, y, z
 
 
-def decrypt(image_path):
-    image_to_one_dimension_array, image_shape = image_to_one_dimension(image_path)
-
+def decrypt(image_array):
     x0 = 0.02
     y0 = 0.01
     z0 = 0.03
     h = 0.001
 
-    n_steps = image_to_one_dimension_array.size - 1
+    n_steps = image_array.size - 1
     x, y, z = discretization_lorenz_based_on_euler(x0, y0, z0, n_steps, h)
     x_quantificated_sequence = array_quantification(x)
-    fluid_key = build_fluid_key(x_quantificated_sequence, len(image_to_one_dimension_array))
+    fluid_key = build_fluid_key(x_quantificated_sequence, len(image_array))
 
-    decryption_seq = xor_arrays(image_to_one_dimension_array, fluid_key)
-    decrypted_image = get_image_from_sequence(decryption_seq, image_shape)
-    # decrypted_image.show()
-    decrypted_path = os.path.dirname(image_path) + "/" + os.path.basename(image_path).split(".")[0] + "_decrypted.jpeg"
-    decrypted_image.convert('L').save(decrypted_path)
-    print(decrypted_path)
+    decryption_seq = xor_arrays(image_array, fluid_key)
+    return decryption_seq
 
 
 def build_fluid_key(x_quantificated_sequence, length):
@@ -72,22 +63,15 @@ def build_fluid_key(x_quantificated_sequence, length):
             range(length)]
 
 
-def encrypt(image_path):
-    image_to_one_dimension_array, image_shape = image_to_one_dimension(image_path)
+def encrypt(image_array):
     x0 = 0.02
     y0 = 0.01
     z0 = 0.03
     h = 0.001
-    n_steps = image_to_one_dimension_array.size - 1
+    n_steps = image_array.size - 1
     x, y, z = discretization_lorenz_based_on_euler(x0, y0, z0, n_steps, h)
     x_quantificated_sequence = array_quantification(x)
-    fluid_key = build_fluid_key(x_quantificated_sequence, len(image_to_one_dimension_array))
+    fluid_key = build_fluid_key(x_quantificated_sequence, len(image_array))
 
-    encryption_seq = xor_arrays(image_to_one_dimension_array, fluid_key)
-
-    encrypted_image = get_image_from_sequence(encryption_seq, image_shape)
-    # encrypted_image.show()
-    enc_filename = os.path.dirname(image_path) + "/" + os.path.basename(image_path).split(".")[
-        0] + "_encrypted" + ".png"
-    encrypted_image.convert('L').save(enc_filename)
-    print(enc_filename)
+    encryption_seq = xor_arrays(image_array, fluid_key)
+    return encryption_seq
