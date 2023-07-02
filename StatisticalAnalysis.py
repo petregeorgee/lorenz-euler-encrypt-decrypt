@@ -41,6 +41,29 @@ def calculate_mse(image1_path, image2_path):
     gray_image2 = np.mean(image2.flatten())
 
     # Calculate the Mean Squared Deviation (MSE)
-    mse = np.mean((gray_image1 - gray_image2) ** 2)
+    squared_error = np.square(gray_image1 - gray_image2)
+
+    # Calculate the mean squared error
+    mse = np.mean(squared_error)
 
     return mse
+
+
+def calculate_uaci(original_image, modified_image):
+    uaci = 0.0
+
+    img_1 = Image.open(original_image)
+    img_2 = Image.open(modified_image)
+
+    width, height = img_1.size
+    total = width * height
+
+    for row in range(height):
+        for column in range(width):
+            pixel_1 = img_1.getpixel((column, row))
+            pixel_2 = img_2.getpixel((column, row))
+            uaci += (abs(pixel_1 - pixel_2) % 255)
+
+    uaci = (uaci / total) *  100
+
+    return uaci
